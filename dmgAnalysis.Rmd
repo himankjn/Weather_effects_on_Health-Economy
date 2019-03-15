@@ -15,8 +15,8 @@ library(data.table)
 library(dplyr)
 ```
 ## Reading the data
-```{r,cache=TRUE}
-storm<-fread("repdata_data_StormData.csv",sep=",",header=TRUE)
+```{r}
+storm<-fread("repdata_data_StormData.csv.bz2",sep=",",header=TRUE)
 ```
 ## Exploratory Analysis
 ```{r}

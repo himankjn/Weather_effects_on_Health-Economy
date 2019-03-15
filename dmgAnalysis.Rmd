@@ -1,0 +1,93 @@
+---
+title: "Damage due to Weather Events"
+author: "Himank Jain"
+date: "March 15, 2019"
+output: html_document
+---
+# Sypnosis:Analysis of Weather Events.
+The source of the data is NOAA Storm Database. The Analysis tries to deduce the effect of multiple weather events on Public Health and Economy. Weather events cause massive health hazards and economic problems every year and it's important to understand their nature and characterstics.
+This analysis involves data visualization for studying the effects of major weather events on both puclic health and economy. The health effects include fatalities and inuries and economic factors include property damage and crop damage.
+
+# Data Processing:
+## Loading required Packages
+```{r setup, include=FALSE}
+library(data.table)
+library(dplyr)
+```
+## Reading the data
+```{r,cache=TRUE}
+storm<-fread("repdata_data_StormData.csv",sep=",",header=TRUE)
+```
+## Exploratory Analysis
+```{r}
+storm<-tbl_df(storm)
+summary(storm)
+str(storm)
+```
+## 1) PUBLIC HEALTH:Fatalities and Injuries
+```{r}
+stormpop<-subset(storm,select = c("EVTYPE","FATALITIES","INJURIES"))
+fatalities<-aggregate(data=stormpop,FATALITIES~EVTYPE,FUN = sum)
+fatalities<-fatalities[order(fatalities$FATALITIES,decreasing = TRUE),]
+injuries<-aggregate(data=stormpop,INJURIES~EVTYPE,FUN=sum)
+injuries<-injuries[order(injuries$INJURIES,decreasing = TRUE),]
+topfatalities<-fatalities[1:20,]
+topinjuries<-injuries[1:20,]
+```
+##Plotting Most effective Weather Events vs Fatalities and Most effective Weather Events and Injuries.
+```{r}
+par(mfrow = c(1, 2), las = 2,cex=0.7,font.lab=2,mar=c(8,4,1,1))
+barplot(topfatalities$FATALITIES,names.arg=topfatalities$EVTYPE,col="red",legend.text = "FATALITIES")
+barplot(topinjuries$INJURIES,names.arg = topinjuries$EVTYPE,col="pink",legend.text = "INJURIES")
+```
+# Aggregating Fatilities and Injuries:
+```{r}
+healthdmg<-merge(fatalities,injuries,by="EVTYPE")
+healthdmg$dmg<-healthdmg$FATALITIES+healthdmg$INJURIES
+healthdmg<-healthdmg[order(healthdmg$dmg,decreasing = TRUE),]
+tophealthdmg<-healthdmg[1:20,]
+par(mfrow=c(1,1),mar=c(12,8,3,3),cex=0.6)
+barplot(tophealthdmg$dmg,names.arg = tophealthdmg$EVTYPE,col="orange",legend.text = "Total Health Damage")
+```
+
+
+* We can Observe that most of the Public health effects (fatalities and injuries) are caused by Tornadoes.
+
+## 2) Economic Consequences:
+```{r}
+stormprop<-subset(storm,select=c("EVTYPE","PROPDMG","CROPDMG"))
+propdmg<-aggregate(data=stormprop,PROPDMG~EVTYPE,FUN=sum)
+cropdmg<-aggregate(data=stormprop,CROPDMG~EVTYPE,FUN=sum)
+propdmg<-propdmg[order(propdmg$PROPDMG,decreasing = TRUE),]
+cropdmg<-cropdmg[order(cropdmg$CROPDMG,decreasing=TRUE),]
+topprop<-propdmg[1:20,]
+topcrop<-cropdmg[1:20,]
+```
+## Visualizing Significant Weather Events vs Property Damage and Significant Weather Events vs Crop Damage:
+```{r}
+par(mfrow = c(1, 2), las = 3,cex=0.6,font.lab=2,mar=c(10,4,1,1))
+barplot(topprop$PROPDMG,names.arg = topprop$EVTYPE,col="blue",legend.text = "Property DMG")
+barplot(topcrop$CROPDMG,names.arg = topcrop$EVTYPE,col="green",legend.text = "Crop DMG")
+```
+## Aggregating Property and Crop Damages:
+```{r}
+economicdmg<-merge(propdmg,cropdmg,by="EVTYPE")
+economicdmg$ecodmg<- economicdmg$PROPDMG+economicdmg$CROPDMG
+economicdmg<-economicdmg[order(economicdmg$ecodmg,decreasing = TRUE),]
+topecodmg<-economicdmg[1:20,]
+```
+## Significant Weather Events vs Economic Loss
+```{r}
+par(mfrow=c(1,1),mar=c(12,8,3,3),cex=0.6)
+barplot(topecodmg$ecodmg,names.arg=topecodmg$EVTYPE,col="brown",legend.text = "Total Economic Damage")
+```
+* We can observe that most of the Economic loss was due to, yet again, Tornadoes!
+
+*** 
+
+# Results:
+From the Analysis done above on the NOAA Storm Database it is quite clear that there are huge health effects and economic consequences due to multiple Weather events in USA alone. Most of these Harmful Health Hazards and Economic loss can be associated largely with **Tornadoes**. There are many other weather events which also harm population health and cause economic losses.
+Second most deaths are caused by **Excessive Heat** and Second most injuries by **TSTM WINDS**.
+Second most Property Damage and Crop Damage is done by **Flash Floods**.
+
+***

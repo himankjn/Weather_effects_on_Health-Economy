@@ -2,7 +2,9 @@
 title: "Damage due to Weather Events"
 author: "Himank Jain"
 date: "March 15, 2019"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 # Sypnosis:Analysis of Weather Events.
 The source of the data is NOAA Storm Database. The Analysis tries to deduce the effect of multiple weather events on Public Health and Economy. Weather events cause massive health hazards and economic problems every year and it's important to understand their nature and characterstics.
@@ -12,6 +14,7 @@ This analysis involves data visualization for studying the effects of major weat
 ## Loading required Packages
 ```{r setup, include=FALSE}
 library(data.table)
+library(R.utils)
 library(dplyr)
 ```
 ## Reading the data
@@ -83,11 +86,9 @@ barplot(topecodmg$ecodmg,names.arg=topecodmg$EVTYPE,col="brown",legend.text = "T
 ```
 * We can observe that most of the Economic loss was due to, yet again, Tornadoes!
 
-*** 
 
 # Results:
 From the Analysis done above on the NOAA Storm Database it is quite clear that there are huge health effects and economic consequences due to multiple Weather events in USA alone. Most of these Harmful Health Hazards and Economic loss can be associated largely with **Tornadoes**. There are many other weather events which also harm population health and cause economic losses.
 Second most deaths are caused by **Excessive Heat** and Second most injuries by **TSTM WINDS**.
 Second most Property Damage and Crop Damage is done by **Flash Floods**.
 
-***
